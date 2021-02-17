@@ -26,8 +26,8 @@ class NumberObj(object):
         tempList=[]
         #max index for numberList to use as start for while loop counter to work from right ot left
         i=-1
-        if len(numberList)>1:
-            i=len(numberList)-1
+        if self.processedInputLength>1:
+            i=self.processedInputLength-1
 
         while i > -1:
             #print(f"numList: {numberList}")
