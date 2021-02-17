@@ -3,7 +3,8 @@ class NumberObj(object):
 
     def __init__(self, number):
         #building all properties to consider on init
-        self.numberStr = number
+        self.number=number
+        self.numberStr = str(number)
         #removing "-" and "." if present We will reinsert later if present, but will rely on properties as flags
         self.processedInputStr=''.join([k for k in self.numberStr if k not in ["-","."]])
         #we only care about the processed string length for our purposes
@@ -25,7 +26,7 @@ class NumberObj(object):
         #must be more than one number if we are to attempt to rearrange
         if self.processedInputLength>1:
 
-            for i in range(self.processedInputLength-1,0,-1):
+            for i in range(self.processedInputLength-1,-1,-1):
                 #hold this value because we are going to remove it from numberList and need to compare in loop below
                 tempVal=numberList[i]
                 tempList.append(tempVal)
@@ -59,8 +60,8 @@ class NumberObj(object):
                     finishedStrList+=[str(y) for y in numberList+tempList]
                     if self.isFloat:
                         finishedStrList.insert(self.numberStr.index("."),".")
-                    return "".join(finishedStrList)
-
+                        return float("".join(finishedStrList))
+                    return int("".join(finishedStrList))
             #if we ever get here, no higher number was possible
         return -1
 
