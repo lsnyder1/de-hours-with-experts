@@ -11,6 +11,6 @@ def next_biggest_number(num):
     numberObj=classes.NumberObj(num)
 
     #return numberObj.getNextBiggestPos()
-    return numberObj.dump()
+    return numberObj.getNextBiggest()
 if __name__ == "__main__":
     main()
