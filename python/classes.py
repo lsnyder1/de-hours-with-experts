@@ -5,58 +5,51 @@ class NumberObj(object):
         #building all properties to consider on init
         self.numberStr = number
         #removing "-" and "." if present We will reinsert later if present, but will rely on properties as flags
-        self.processedInputStr=''.join(filter(lambda k: k not in ["-","."], self.numberStr))
+        self.processedInputStr=''.join([k for k in self.numberStr if k not in ["-","."]])
         #we only care about the processed string length for our purposes
         self.processedInputLength=len(self.processedInputStr)
         #flags for manipulating string at end, validating string as input is assumed sanitized
         self.isNegative=True if "-" in self.numberStr else False
         self.isFloat=True if "." in self.numberStr else False
-        if self.isFloat:
-            #declaring here so self.decimalIndex is none/null if not isFloat we're going to insert back in later if isFloat immediately after "-" if needed so our index is valid
-            self.decimalIndex=self.numberStr.index(".")
+
+
 
 
 
 
     def getNextBiggest(self):
         #cast the string to int list
-        numberList=list(map(lambda x:int(x),self.processedInputStr))
+        numberList=[int(x) for x in self.processedInputStr]
         #just here for something to insert "-" and"." , then return "".join later
         finishedStrList=[]
         #holds all of the numbers we will remove from numberList, we will have to reorganize these to build correct number
         tempList=[]
-
         #max index for numberList to use as start for while loop counter to work from right ot left
-        i=len(numberList)-1
+        i=-1
+        if len(numberList)>1:
+            i=len(numberList)-1
+
         while i > -1:
-            print("numList: ")
-            print(numberList)
+            #print(f"numList: {numberList}")
             #Break from the while loop by returning as soon as there is a value higher than the last remaining index of numberList, or lower if negative
             #hold this value because we are going to remove it from numberList and need to compare in loop below
-            tempVal=int(numberList[i])
-
+            tempVal=numberList[i]
+            #moving values between lists to indicate
             tempList.append(tempVal)
             tempList.sort()
-            numberList.pop(i)
+            del numberList[i]
 
             #testLogs to be removed
-            print("tempVal: ")
-            print(tempVal)
-            print("maxTempList: ")
-            print(max(tempList))
-            print("TempList: ")
-            print(tempList)
+            #print(f"tempVal: {tempVal}")
+            #print(f"maxTempList: {max(tempList)}")
+            #print(f"TempList: {tempList}")
 
-            if self.isNegative:
-                #todo
-                if min(tempList)<tempVal:
-                    return "neggo beggo. Hold up, not done yet"
-            else:
-                #when this is true we are going to be done looping
-                if max(tempList)>tempVal:
-                    #need to grab all values bigger than the one we just cut so we can select the smallest one as a replacement.
-                    biggerThanIList=list(filter(lambda x:x>tempVal,tempList))
-                    #sort so we get the lowest val at [0]
+            #if this evaulates to true we are done looping, time to build the return string
+            if(max(tempList)>tempVal and not self.isNegative) or (min(tempList)<tempVal and self.isNegative):
+                if self.isNegative==False:
+                #positive numbers
+
+                    biggerThanIList=[x for x in tempList if x>tempVal]
                     biggerThanIList.sort()
                     #put the lowest value back in numberList
                     numberList.append(biggerThanIList[0])
@@ -64,12 +57,22 @@ class NumberObj(object):
                     tempList.remove(biggerThanIList[0])
                     #sort to ensure ascending order
                     tempList.sort()
-                    finishedStrList=list(map(lambda y:str(y),numberList+tempList))
-                    if self.isNegative:
-                        finishedStrList.insert(0,"-")
-                    if self.isFloat:
-                        finishedStrList.insert(self.decimalIndex,".")
-                    return "".join(finishedStrList)
+
+                else:
+                #negative numbers
+
+                    smallerThanIList=[x for x in tempList if x<tempVal]
+                    smallerThanIList.sort(reverse=True)
+                    numberList.append(smallerThanIList[0])
+                    tempList.remove(smallerThanIList[0])
+                    tempList.sort(reverse=True)
+                    finishedStrList.insert(0,"-")
+
+                #+=here since we already have [0] if negative
+                finishedStrList+=[str(y) for y in numberList+tempList]
+                if self.isFloat:
+                    finishedStrList.insert(self.numberStr.index("."),".")
+                return "".join(finishedStrList)
 
             #decrementing as working right to left through user numberList
             i-=1
